@@ -9,11 +9,11 @@ Original file is located at
 
 # Commented out IPython magic to ensure Python compatibility.
 # %pip install -q langchain langchain-nvidia-ai-endpoints gradio
-
-import os
-os.environ["NVIDIA_API_KEY"] = "nvapi-..."
-
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
+import os
+os.environ["NVIDIA_API_KEY"] = 'dWpudjBscnVoaWRwbTVpcHNtbTg4MjAxaG86ZmU0ZDI3OWMtNGQ5OC00ZDUxLTg3ZjUtYzI2NjQ3ZTQ0YTdl'
+
+
 ChatNVIDIA.get_available_models()
 
 from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
@@ -49,7 +49,7 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-chat_llm = ChatNVIDIA(model="meta/llama3-8b-instruct")
+chat_llm = ChatNVIDIA(model="meta/llama3-8b-instruct", api_key = 'NVIDIA_API_KEY')
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Only respond in rhymes"),
@@ -60,3 +60,11 @@ rhyme_chain = prompt | chat_llm | StrOutputParser()
 
 print(rhyme_chain.invoke({"input" : "Tell me about birds!"}))
 
+import requests
+
+headers = {
+    "Authorization": f"Bearer {os.environ['NVIDIA_API_KEY']}"
+}
+
+response = requests.get("https://api.ngc.nvidia.com/v2/models", headers=headers)  # Replace with the correct endpoint
+print(response.status_code, response.text)
